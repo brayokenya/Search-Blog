@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField,TextAreaField,SubmitField, SelectField
-from wtforms.validators import Required
+from wtforms.validators import Required, Email
+
 
 class BlogForm(FlaskForm):
 
@@ -24,3 +25,8 @@ class Vote(FlaskForm):
 class UpdateProfile(FlaskForm):
     bio = TextAreaField('bio', validators=[Required()])
     submit = SubmitField('Post')
+
+class SubscriberForm(FlaskForm):
+    name  = StringField('Your name', validators = [Required()])
+    email = StringField('Your email address', validators = [Required(), Email()])
+    submit = SubmitField('Subscribe')    

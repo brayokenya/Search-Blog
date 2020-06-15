@@ -1,10 +1,11 @@
 from flask import render_template,request,redirect,url_for,abort
 from . import main
-from .forms import BlogForm, UpdateProfile, CommentForm
+from .forms import BlogForm, UpdateProfile, CommentForm, SubscriberForm
 from flask_login import login_required, current_user
-from ..models import User, Quote, Comment, Upvote, Downvote, Post
+from ..models import User, Quote, Comment, Upvote, Downvote, Post, Subscriber
 from .. import db,photos
 from ..requests import get_quote
+
 
 
 # Views
@@ -15,10 +16,9 @@ def index():
     View root page function that returns the index page and its data
     '''
     Quote = get_quote()
-    message = "Welcome to Scribble"
-    title = 'Scribble'
-    click_bait = 'In life, you only have 60 seconds to impress someone. 1 minute can make or break you. How do we make sure that you use your 1 minute to actually say something meaningful?'
-    return render_template('index.html',  title = title, message = message, click_bait = click_bait, Quote=Quote)
+   
+    title = 'BlogTech.com'
+    return render_template('index.html',  title = title, Quote=Quote)
 
 @main.route('/user/<uname>')
 def profile(uname):
@@ -155,3 +155,22 @@ def downvote(id):
     vm = Downvote(post=post, downvote=1)
     vm.save()
     return redirect(url_for('main.blog'))
+
+
+@main.route('/blog/comment/delete/<int:id>', methods = ['GET', 'POST'])
+@login_required
+def delete_comment(id):
+    comments = Comment.query.filter_by(id=id).first()
+    post_id = comment.blog
+    Comment.delete_comment(id)
+    return redirect(url_for('main.blog',id=post_id))
+
+
+@main.route('/subscribe', methods=['GET','POST'])
+def subscriber():
+    subscriber_form = SubscriberForm()
+    if subscriber_form.validate_on_submit():
+        email = subscriber_form.email.data
+        name = subscriber_form.name.data
+        return redirect(url_for('main.subscriber'))
+    return render_template('subscribe.html', subscriber_form=subscriber_form)
