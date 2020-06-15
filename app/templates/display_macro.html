@@ -1,0 +1,34 @@
+{% macro display_blogs(blogs) %}
+
+<div class="container-fluid" style="background-image: url();">
+    <div>
+        <br><br>
+    </div>
+    <div class="jumbotron" style="background-color: rgb(241, 243, 243);">
+        <div class="overlay">
+            <h2 class=" ">Write your blog</h2>
+            <a href="/new_blog"><button class="btn btn-primary">Lets begin</button></a>
+        </div>
+    </div>
+    <div class="card-columns">
+        {% if blogs %} {% for my_blog in blogs %}
+        <div class="card">
+            <div class="card-body" style="background-color:grey">
+                <p>Title: {{my_blog.title}}</p>
+                <p>Blog Post: {{my_blog.post}}</p>
+                <p>Date Created: {{my_blog.date_created}}</p>
+                <p>{{my_blog.username}}</p>
+
+            </div>
+            <div class="card-footer foot_flex d-block mx-auto" style="background-color: teal">
+                <a href="/comment/{{my_blog.id}}"><button class="btn btn-info">Comment</button></a>
+                <a href="/like/{{my_blog.id}}"><button class="btn btn-success">Like {{my_blog.up_vote.count()}}</button></a>
+                <h1>{{upvotes}}</h1>
+                <a href="/dislike/{{my_blog.id}}"><button class="btn btn-danger">Dislike {{my_blog.down_vote.count()}}</button></a>
+                <h4></h4>
+            </div>
+        </div>
+        {% endfor %} {% endif %}
+    </div>
+</div>
+{% endmacro %}
