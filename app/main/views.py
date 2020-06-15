@@ -1,6 +1,6 @@
 from flask import render_template,request,redirect,url_for,abort
 from . import main
-from .forms import BlogForm, UpdateProfile, CommentForm, SubscriberForm
+from .forms import BlogForm, UpdateProfile, CommentForm
 from flask_login import login_required, current_user
 from ..models import User, Quote, Comment, Upvote, Downvote, Post, Subscriber
 from .. import db,photos
@@ -99,6 +99,7 @@ def new_post():
     View scribble page function that returns the scribble details page and its data
     '''
     title = 'Blogtech.com'
+    # date_created = blog.date_created.strftime('%b %d, %Y')
     
 
     form = BlogForm()
@@ -166,11 +167,3 @@ def delete_comment(id):
     return redirect(url_for('main.blog',id=post_id))
 
 
-@main.route('/subscribe', methods=['GET','POST'])
-def subscriber():
-    subscriber_form = SubscriberForm()
-    if subscriber_form.validate_on_submit():
-        email = subscriber_form.email.data
-        name = subscriber_form.name.data
-        return redirect(url_for('main.subscriber'))
-    return render_template('subscribe.html', subscriber_form=subscriber_form)
