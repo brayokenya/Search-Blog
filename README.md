@@ -15,7 +15,7 @@ The following command installs all the application requirements
 
 ## Setup
 Run 
-``https://github.com/brayokenya/Scribble.git``
+``https://github.com/brayokenya/Search-Blog.git``
 
 or download the zip file from github.
 
