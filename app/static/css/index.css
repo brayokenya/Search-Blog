@@ -11,3 +11,8 @@ body {
 .navbar {
     background-color: rgb(0, 0, 0);
 }
+
+#submit {
+    background-color: green;
+    border-radius: 5px;
+}

@@ -1,9 +1,10 @@
 from flask import render_template,request,redirect,url_for,abort
 from . import main
-from .forms import PitchForm, UpdateProfile
+from .forms import BlogForm, UpdateProfile, CommentForm
 from flask_login import login_required, current_user
-from ..models import User
+from ..models import User, Quote, Comment, Upvote, Downvote, Post
 from .. import db,photos
+from ..requests import get_quote
 
 
 # Views
@@ -13,16 +14,16 @@ def index():
     '''
     View root page function that returns the index page and its data
     '''
+    Quote = get_quote()
     message = "Welcome to Scribble"
     title = 'Scribble'
     click_bait = 'In life, you only have 60 seconds to impress someone. 1 minute can make or break you. How do we make sure that you use your 1 minute to actually say something meaningful?'
-    return render_template('index.html',  title = title, message = message, click_bait = click_bait)
+    return render_template('index.html',  title = title, message = message, click_bait = click_bait, Quote=Quote)
 
 @main.route('/user/<uname>')
 def profile(uname):
     user = User.query.filter_by(username = uname).first()
     
-
     if user is None:
         abort(404)
 
@@ -81,3 +82,76 @@ def updateprofile(name):
         user.save()
         return redirect(url_for('.profile', name=name))
     return render_template('profile/profile.html', form=form)
+
+
+@main.route('/blogs')
+@login_required
+def blog():
+    blogs = Post.query.all()
+    likes = Upvote.query.all()
+    return render_template('blogs_display.html', blogs=blogs, likes=likes, user=user)
+
+@main.route('/new_blog', methods=['GET', 'POST'])
+@login_required
+def new_post():
+
+    '''
+    View scribble page function that returns the scribble details page and its data
+    '''
+    title = 'Blogtech.com'
+    
+
+    form = BlogForm()
+    if form.validate_on_submit():
+        title = form.title.data
+        post= form.post.data
+        user_id = current_user._get_current_object().id
+        post_obj = Post(post=post, title=title, user_id=user_id)
+        post_obj.save()
+        return redirect(url_for('main.blog'))
+    return render_template('new_blog.html', form=form)
+
+
+
+@main.route('/comment/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def comment(post_id):
+    # date_created = blog.date_created.strftime('%b %d, %Y')
+    form = CommentForm()
+    post = Post.query.get(post_id)
+    user = User.query.all()
+    comments = Comment.query.filter_by(post_id=post_id).all()
+    if form.validate_on_submit():
+        comment = form.comment.data
+        post_id = post_id
+        user_id = current_user._get_current_object().id
+        new_comment = Comment(
+            comment=comment,
+            post_id=post_id,
+            user_id=user_id,
+            )
+
+        new_comment.save()
+        new_comments = [new_comment]
+        print(new_comments)
+        return redirect(url_for('.comment', post_id=post_id))
+    return render_template('comment.html', form=form, post=post, comments=comments, user=user)
+
+
+
+@main.route('/like/<int:id>', methods=['POST', 'GET'])
+@login_required
+def upvote(id):
+    post = Post.query.get(id)
+    vote_mpya = Upvote(post=post, upvote=1)
+    vote_mpya.save()
+    return redirect(url_for('main.blog'))
+
+
+@main.route('/dislike/<int:id>', methods=['GET', 'POST'])
+@login_required
+def downvote(id):
+    post = Post.query.get(id)
+    vm = Downvote(post=post, downvote=1)
+    vm.save()
+    return redirect(url_for('main.blog'))
