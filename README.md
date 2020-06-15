@@ -72,13 +72,13 @@ After extracting the files,
 | Password  | Account password, ``eg parseword``|
 | Confirm Password  | Account password, ``eg parseword``|
 
-> Pitches inputs
+> Blogs inputs
 
 | Inputs | Description  |
 |---|---|
-|  Heading | Pitch description eg; ``pickup lines``  |
-|  Pitch text| The actual pitch body|
-| Comment| A comment on the pitch|
+|  Heading | Blog eg; ``Life``  |
+|  Blog text| The actual blog body|
+| Comment| A comment on the Blog|
 
 ## Fun Fact
 I broke a sweat
